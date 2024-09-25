@@ -1,0 +1,38 @@
+#include <iostream>
+#include <cmath> // Для використання функції pow() та abs()
+using namespace std;
+//Begin5
+//Дана довжина ребра куба a. 
+//Знайти об'єм куба V = a3 і площу його поверхні S = 6 · a2
+int main() {
+    double a, V, S;
+    cout<<"Enter a:";
+    cin>>a;
+    double base = a; // Основа
+    double exponent1 = 3.0; // Степень
+    double exponent = 2.0; // Степень
+
+    // Взводимо до степеня
+    V =pow (base, exponent1);
+    S = 6 * pow (base, exponent);
+
+    std::cout <<"Об'єм куба V="<< V <<"  Площа поверхні куба S=" << S << std::endl;
+//Begin14
+//Дано три точки A, B, C на числової осі. Точка C розташована між точками A і B.
+//Знайти добуток довжин відрізків AC і BC.
+    double A, B, C, w, q;
+    cout<<"A < C < B";
+    cout<<"  Enter A:";
+    cin>>A;
+    cout<< "Enter C:";
+    cin>>C;
+    cout<< "Enter B:";
+    cin>>B;
+    w=C-A, q=C-B;
+    double result1 = abs(q); //функція модуля через команду abs() для цілих чисел 
+    double result = w*result1;
+    cout<<"Добуток довжин відрізків АС і ВС = "<< result<< std::endl;
+    
+
+    return 0; 
+}
