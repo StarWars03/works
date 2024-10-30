@@ -41,7 +41,7 @@ int main()
     log_4_x = log(fabs(x)) / log(4);                   // Логарифм чисельника                                 
     num =  log_4_x * sqrt(fabs(x * sin(x) * cos(x))); // Чисельник
     cos_x = cos(x + 32 * (M_PI / 180));              // Косінус знаменника
-    denom = cos_x + ahl * sqrt(x + 5);              // Знаменник
+    denom = cos_x + z * sqrt(x + 5);              // Знаменник
     u = num / denom;                               // Розрахунок дробового виразу
     y = z * u;                                    // Знаходження y
      
