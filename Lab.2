@@ -27,23 +27,23 @@ int main()
     T = Q % 10;          // Четверта цифра
 
     // Перевірка на однаковість чисел
-    if (W == T && E == R) {
-        cout << "Число читається однаково зліва направо і справа наліво - TRUE" << endl;
-    } else {
-        cout << "Число читається однаково зліва направо і справа наліво - FALSE" << endl;
-    }
+     bool is_pos = W == T && E == R;
+     cout << boolalpha << is_pos << endl;
     
     // y = ... (tab.3 #7)
-    double  x, t, num, denom, y; // Декларація дійсних змінних
+    const doble ahl = 0.5;
+    double  x, num, denom, y, log_4_x, cos_x, operation; // Декларація дійсних змінних
     // Введення данних
     cout << "Real argument x = ";
     cin >> x;
     
     // Підрахунок
-    t = 1/2;                                                    // Проміжна змінна
-    num = log(abs(x)) / log(4) * sqrt(abs(x * sin(x) * cos(x))); // Чисельник
-    denom = cos(x + 32) + 1/2 * (sqrt(x + 5));                  // Знаменник
-    y = tgx * (num / denom);
+    log_4_x = log(fabs(x)) / log(4);                   // Логарифм чисельника                                 
+    num =  log_4_x * sqrt(fabs(x * sin(x) * cos(x))); // Чисельник
+    cos_x = cos(x + 32 * (M_PI / 180));              // Косінус знаменника
+    denom = cos_x + ahl * sqrt(x + 5);              // Знаменник
+    operation = num / denom;
+    y = ahl * operation;
     
     // Виведення результату
     cout << "Function y = " << y <<endl;
