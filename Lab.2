@@ -31,8 +31,8 @@ int main()
      cout << boolalpha << is_pos << endl;
     
     // y = ... (tab.3 #7)
-    const double ahl = 0.5;
-    double  x, num, denom, y, log_4_x, cos_x, operation; // Декларація дійсних змінних
+    const double z = 0.5;
+    double  x, num, denom, y, log_4_x, cos_x, u; // Декларація дійсних змінних
     // Введення данних
     cout << "Real argument x = ";
     cin >> x;
@@ -42,9 +42,9 @@ int main()
     num =  log_4_x * sqrt(fabs(x * sin(x) * cos(x))); // Чисельник
     cos_x = cos(x + 32 * (M_PI / 180));              // Косінус знаменника
     denom = cos_x + ahl * sqrt(x + 5);              // Знаменник
-    operation = num / denom;
-    y = ahl * operation;
-    
+    u = num / denom;                               // Розрахунок дробового виразу
+    y = z * operation;                            // Знаходження y
+     
     // Виведення результату
     cout << "Function y = " << y <<endl;
     
