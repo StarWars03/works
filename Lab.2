@@ -38,12 +38,12 @@ int main()
     cin >> x;
     
     // Підрахунок
-    log_4_x = log(fabs(x)) / log(4);                   // Логарифм чисельника                                 
-    num =  log_4_x * sqrt(fabs(x * sin(x) * cos(x))); // Чисельник
-    cos_x = cos(x + 32 * (M_PI / 180));              // Косінус знаменника
+    log_4_x = log(fabs(x)) / log(4);                    // Логарифм чисельника                                 
+    num =  log_4_x * sqrt(fabs(x * sin(x) * cos(x)));  // Чисельник
+    cos_x = cos(x + 32 * (M_PI / 180));               // Косінус знаменника
     denom = cos_x + half * sqrt(x + 5);              // Знаменник
-    drob = num / denom;                               // Розрахунок дробового виразу
-    y = half * drob;                                    // Знаходження y
+    drob = num / denom;                             // Розрахунок дробового виразу
+    y = half * drob;                               // Знаходження y
      
     // Виведення результату
     cout << "Function y = " << y <<endl;
