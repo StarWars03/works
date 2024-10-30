@@ -34,13 +34,13 @@ int main()
     }
     
     // y = ... (tab.3 #7)
-    double  x, tgx, num, denom, y; // Декларація дійсних змінних
+    double  x, t, num, denom, y; // Декларація дійсних змінних
     // Введення данних
     cout << "Real argument x = ";
     cin >> x;
     
     // Підрахунок
-    tgx = 1/2;                                                    // Проміжна змінна
+    t = 1/2;                                                    // Проміжна змінна
     num = log(abs(x)) / log(4) * sqrt(abs(x * sin(x) * cos(x))); // Чисельник
     denom = cos(x + 32) + 1/2 * (sqrt(x + 5));                  // Знаменник
     y = tgx * (num / denom);
