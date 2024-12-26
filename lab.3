@@ -1,0 +1,38 @@
+#include <iostream>
+using namespace std;
+   
+       //If23. 
+      //Дано цілочисельні координати трьох вершин прямокутника, сторони якого паралельні координатним осях.
+     // Знайти координати його четвертої вершини.
+    //Функція для знаходження четвертої вершини
+pair<int, int> findFourthVertex(pair<int, int> v1, pair<int, int> v2, pair<int, int> v3) {
+    // Знаходимо четверту вершину:
+    int x4 = v1.first ^ v2.first ^ v3.first;
+    int y4 = v1.second ^ v2.second ^ v3.second;
+
+    return {x4, y4};
+}
+
+int main() {
+    // Вхідні координати трьох вершин
+    pair<int, int> v1, v2, v3;
+
+    cout << "Введіть координати трьох вершин прямокутника:\n";
+
+    cout << "Вершина 1 (x y): ";
+    cin >> v1.first >> v1.second;
+
+    cout << "Вершина 2 (x y): ";
+    cin >> v2.first >> v2.second;
+
+    cout << "Вершина 3 (x y): ";
+    cin >> v3.first >> v3.second;
+
+    // Знаходимо четверту вершину
+    pair<int, int> v4 = findFourthVertex(v1, v2, v3);
+
+    // Виводимо результат
+    cout << "Координати четвертої вершини: (" << v4.first << ", " << v4.second << ")\n";
+
+    return 0;
+}
