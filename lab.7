@@ -1,0 +1,126 @@
+#include <iostream>
+using namespace std;
+
+const int limit_M = 20, limit_N = 20;
+
+// Функція для знаходження номера стовпця з найменшим добутком елементів
+void findMinProductColumn(int matrix[limit_M][limit_N], int M, int N) {
+    int min_N = 0;  // індекс стовпця з мінімальним добутком
+    long long min_save_n = LLONG_MAX;  // мінімальне значення добутку
+
+    // Проходимо по кожному стовпцю
+    for (int j = 0; j < N; ++j) {
+        long long product = 1;  // початковий добуток
+        for (int i = 0; i < M; ++i) {
+            product *= matrix[i][j];  // множимо всі елементи стовпця
+        }
+        if (product < min_save_n) {  // якщо добуток менший за мінімальний — оновлюємо
+            min_save_n = product;
+            min_N = j;
+        }
+    }
+
+    // Виводимо номер стовпця (з урахуванням індексації від 1) та його добуток
+    cout << "\nColumn number with the smallest product: " << (min_N + 1) << endl;
+    cout << "Least product : " << min_save_n << endl;
+}
+
+// Функція для видалення всіх стовпців, у яких тільки додатні значення
+void removePositiveColumns(int matrix[limit_M][limit_N], int M, int& N) {
+    bool toDelete[limit_N] = { false };  // масив для позначення стовпців, які потрібно видалити
+    int newN = 0;
+
+    // Визначаємо які стовпці містять тільки додатні елементи
+    for (int j = 0; j < N; ++j) {
+        bool allPositive = true;
+        for (int i = 0; i < M; ++i) {
+            if (matrix[i][j] <= 0) {  // якщо хоча б один елемент не додатній — не видаляємо
+                allPositive = false;
+                break;
+            }
+        }
+        toDelete[j] = allPositive;  // якщо всі елементи додатні — помічаємо на видалення
+    }
+
+    // Створюємо нову матрицю без стовпців, які потрібно видалити
+    bool anyDeleted = false;  // прапор — чи були видалені стовпці
+    for (int j = 0; j < N; ++j) {
+        if (!toDelete[j]) {
+            for (int i = 0; i < M; ++i) {
+                matrix[i][newN] = matrix[i][j];  // копіюємо стовпець у нову позицію
+            }
+            newN++;
+        }
+        else {
+            anyDeleted = true;  // хоча б один стовпець був видалений
+        }
+    }
+
+    N = newN; // Оновлюємо кількість стовпців після видалення
+
+    // Виводимо оновлену матрицю
+    cout << "\nResulting matrix:" << endl;
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+    if (!anyDeleted) {
+        cout << "(No columns removed)" << endl;  // якщо жоден стовпець не було видалено
+    }
+}
+
+int main() {
+    int choice;
+    do {
+        // Меню вибору дії користувача
+        cout << "\n=== Matrix Processing Menu ===" << endl;
+        cout << "1. Matrix26: Find column with the smallest product" << endl;
+        cout << "2. Matrix67: Remove columns with only positive elements" << endl;
+        cout << "0. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1 || choice == 2) {
+            int M, N;
+            int matrix[limit_M][limit_N];
+
+            // Введення розміру матриці
+            cout << "Enter the number of rows (M): ";
+            cin >> M;
+            cout << "Enter the number of columns (N): ";
+            cin >> N;
+
+            // Перевірка розмірів матриці
+            if (M < 2 || M > limit_M || N < 2 || N > limit_N) {
+                cout << "Error: Matrix size must be between 2 and 20.\n";
+                continue;
+            }
+
+            // Введення елементів матриці
+            cout << "Enter the matrix elements (" << M * N << " numbers):\n";
+            for (int i = 0; i < M; ++i) {
+                for (int j = 0; j < N; ++j) {
+                    cout << "matrix[" << i + 1 << "][" << j + 1 << "] = ";
+                    cin >> matrix[i][j];
+                }
+            }
+
+            // Виклик відповідної функції в залежності від вибору
+            if (choice == 1) {
+                findMinProductColumn(matrix, M, N);
+            }
+            else if (choice == 2) {
+                removePositiveColumns(matrix, M, N);
+            }
+        }
+        else if (choice != 0) {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    } while (choice != 0);
+
+    cout << "Exiting..." << endl;
+    return 0;
+}
