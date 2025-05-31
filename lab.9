@@ -1,0 +1,158 @@
+// === file: main.cpp ===
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "string_utils.h"
+
+using namespace std;
+
+// Оголошення функцій для окремих завдань
+void task1();
+void task2();
+
+int main() {
+    int choice;
+    do {
+        // Меню вибору задачі користувачем
+        cout << "\n=== Menu ===\n";
+        cout << "1. Task 1: Simulation string::rfind\n";
+        cout << "2. Task 2: String52.\n";
+        cout << "0. Exit\n";
+        cout << "You choice: ";
+        cin >> choice;
+        cin.ignore(); // очищення буфера після введення числа
+
+        // Вибір функції на основі введеного номера
+        switch (choice) {
+        case 1: task1(); break;
+        case 2: task2(); break;
+        case 0: cout << "Enging program.\n"; break;
+        default: cout << "Wrong choice.\n";
+        }
+    } while (choice != 0); // Повторювати меню, поки не вибрано вихід
+
+    return 0;
+}
+
+// Завдання 1: власна реалізація rfind та порівняння з std::string::rfind
+void task1() {
+    char cstr[256];     // масив символів для введення C-рядка
+    string str;         // об'єкт string для стандартного методу
+    string pattern;     // підрядок, який будемо шукати
+
+    // Ввід основного рядка
+    cout << "Enter a string: ";
+    cin.getline(cstr, 256);
+    str = string(cstr); // перетворення C-рядка в string
+
+    // Ввід підрядка
+    cout << "Enter a substring to search for: ";
+    getline(cin, pattern);
+
+    // Пошук з використанням стандартної функції
+    size_t std_rfind = str.rfind(pattern);
+    // Пошук з використанням власної реалізації
+    int my_rfind = my_rfind_func(cstr, pattern.c_str());
+
+    // Виведення обох результатів для порівняння
+    cout << "[std::string::rfind]: " << std_rfind << endl;
+    cout << "[my_rfind_func]:     " << my_rfind << endl;
+}
+
+// Завдання 2: Обробка рядків з файлу, форматування та запис результату
+void task2() {
+    ifstream infile("input.txt");      // Вхідний файл
+    ofstream outfile("output.txt");    // Вихідний файл
+
+    // Перевірка чи відкрився файл для читання
+    if (!infile.is_open()) {
+        cerr << "Failed to open input.txt\n";
+        return;
+    }
+
+    string line; // змінна для збереження поточного рядка з файлу
+
+    // Зчитуємо файл рядок за рядком
+    while (getline(infile, line)) {
+        // Якщо рядок відповідає умовам — форматувати
+        if (is_valid_line(line)) {
+            string cap = capitalize_words(line);
+            outfile << cap << endl; // Запис відформатованого рядка
+        }
+        else {
+            outfile << line << endl; // Інакше — записати без змін
+        }
+    }
+
+    infile.close();   // Закриття вхідного файлу
+    outfile.close();  // Закриття вихідного файлу
+    cout << " The result is recorded in output.txt\n"; // Повідомлення користувачу
+}
+
+
+// === file: string_utils.cpp ===
+#include "string_utils.h"
+#include <cctype>
+#include <cstring>
+
+// Реалізація аналогу string::rfind для C-рядків
+int my_rfind_func(const char* str, const char* substr) {
+    int len_str = strlen(str);
+    int len_sub = strlen(substr);
+
+    if (len_sub == 0 || len_sub > len_str) return -1;
+
+    for (int i = len_str - len_sub; i >= 0; --i) {
+        bool found = true;
+        for (int j = 0; j < len_sub; ++j) {
+            if (str[i + j] != substr[j]) {
+                found = false;
+                break;
+            }
+        }
+        if (found) return i;
+    }
+    return -1; // не знайдено
+}
+
+// Capitalize слів: перша літера слова — велика, інші не змінюємо
+std::string capitalize_words(const std::string& input) {
+    std::string result = input;
+    bool newWord = true;
+
+    for (size_t i = 0; i < result.length(); ++i) {
+        if (isspace(result[i])) {
+            newWord = true;
+        }
+        else if (newWord && isalpha((unsigned char)result[i])) {
+            result[i] = toupper((unsigned char)result[i]);
+            newWord = false;
+        }
+        else {
+            newWord = false;
+        }
+    }
+    return result;
+}
+
+// Перевірка на відповідність умові завдання
+bool is_valid_line(const std::string& line) {
+    if (line.empty()) return false;
+    if (isspace(line[0]) || isspace(line[line.length() - 1])) return false;
+    return true;
+}
+
+
+// === file: string_utils.h ===
+#pragma once
+#include <string>
+
+// Завдання 1 — власна реалізація rfind для C-рядків
+// Повертає позицію останнього входження підрядка або -1
+int my_rfind_func(const char* str, const char* substr);
+
+// Завдання 2 — функція для зміни першої літери кожного слова на велику
+std::string capitalize_words(const std::string& input);
+
+// Завдання 2 — перевірка чи рядок задовольняє умови: непорожній і без пробілів на краях
+bool is_valid_line(const std::string& line);
