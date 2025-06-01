@@ -1,0 +1,166 @@
+// file: лаб 10 main.срр
+#include <iostream>
+#include <cmath>
+#include "geometry.h"
+#include "begin_boolean.h"
+
+using namespace std;
+
+// Прототипи функцій для виконання окремих завдань
+void Task1_Geometry();
+void Task2_BeginBoolean();
+
+int main() {
+    int choice;
+    do {
+        // Меню вибору завдання
+        cout << "\n= Menu =\n";
+        cout << "1. Task 1: Triangle Areas using Heron's Formula\n";
+        cout << "2. Task 2: Begin7 and Boolean23 using structures\n";
+        cout << "0. Exit\n";
+        cout << "Your choice: ";
+        cin >> choice;
+
+        // Виконання вибраного завдання
+        switch (choice) {
+        case 1: Task1_Geometry(); break;
+        case 2: Task2_BeginBoolean(); break;
+        case 0: cout << "Exiting...\n"; break;
+        default: cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 0); // Повторювати меню, поки не обрано вихід
+    return 0;
+}
+
+// Завдання 1: Введення чотирьох точок та обчислення площ трикутників
+void Task1_Geometry() {
+    TPoint A, B, C, D;
+
+    // Ввід координат 4 точок A, B, C, D
+    cout << "Enter point A (x y): "; cin >> A.X >> A.Y;
+    cout << "Enter point B (x y): "; cin >> B.X >> B.Y;
+    cout << "Enter point C (x y): "; cin >> C.X >> C.Y;
+    cout << "Enter point D (x y): "; cin >> D.X >> D.Y;
+
+    // Формування трикутників з точок
+    TTriangle ABC = { A, B, C };
+    TTriangle ABD = { A, B, D };
+    TTriangle ACD = { A, C, D };
+
+    // Обчислення площ трикутників за формулою Герона та вивід результатів
+    cout << "Area of triangle ABC: " << Area(ABC) << endl;
+    cout << "Area of triangle ABD: " << Area(ABD) << endl;
+    cout << "Area of triangle ACD: " << Area(ACD) << endl;
+}
+
+// Завдання 2: Обробка структур для задач Begin7 та Boolean23
+void Task2_BeginBoolean() {
+    CircleData circle;
+    PalindromeNumber number;
+
+    // Обробка задачі Begin7 — довжина кола і площа круга
+    if (circle.input()) {
+        circle.process();
+        circle.output();
+    }
+
+    // Обробка задачі Boolean23 — перевірка паліндрому
+    if (number.input()) {
+        number.process();
+        number.output();
+    }
+}
+
+// file: begin_boolean.h
+#pragma once
+#include <iostream>
+#include <cmath>
+#include <string>
+using namespace std;
+
+// Begin7
+struct CircleData {
+    double R; // Радіус
+    double L, S; // Довжина кола та площа круга
+
+    // Ввід радіуса з перевіркою
+    bool input() {
+        cout << "\nEnter radius R: ";
+        cin >> R;
+        if (R <= 0) {
+            cout << "Invalid radius!\n";
+            return false;
+        }
+        return true;
+    }
+
+    // Обчислення довжини і площі
+    void process() {
+        const double pi = 3.14;
+        L = 2 * pi * R;
+        S = pi * R * R;
+    }
+
+    // Виведення результату
+    void output() {
+        cout << "Length = " << L << endl;
+        cout << "Area = " << S << endl;
+    }
+};
+
+// Boolean23
+struct PalindromeNumber {
+    int number;
+    bool isPalindrome;
+
+    // Ввід числа з перевіркою
+    bool input() {
+        cout << "\nEnter a 4-digit number: ";
+        cin >> number;
+        if (number < 1000 || number > 9999) {
+            cout << "Invalid number!\n";
+            return false;
+        }
+        return true;
+    }
+
+    // Перевірка чи є паліндромом
+    void process() {
+        int d1 = number / 1000;
+        int d2 = (number / 100) % 10;
+        int d3 = (number / 10) % 10;
+        int d4 = number % 10;
+        isPalindrome = (d1 == d4 && d2 == d3);
+    }
+
+    // Виведення результату
+    void output() {
+        cout << "Is palindrome: " << (isPalindrome ? "true" : "false") << endl;
+    }
+}; 
+
+// file: geometry.h
+#pragma once
+#include <cmath>
+
+struct TPoint {
+    double X, Y;
+};
+
+struct TTriangle {
+    TPoint A, B, C;
+};
+
+// Обчислення відстані між двома точками
+inline double Distance(const TPoint& P1, const TPoint& P2) {
+    return sqrt(pow(P2.X - P1.X, 2) + pow(P2.Y - P1.Y, 2));
+}
+
+// Обчислення площі трикутника за формулою Герона
+inline double Area(const TTriangle& T) {
+    double a = Distance(T.A, T.B);
+    double b = Distance(T.A, T.C);
+    double c = Distance(T.B, T.C);
+    double p = (a + b + c) / 2;
+    return sqrt(p * (p - a) * (p - b) * (p - c));
+}
