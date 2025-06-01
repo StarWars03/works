@@ -1,0 +1,200 @@
+// file: main.cpp
+#include <QApplication>
+#include "mainwindow.h"
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+
+    MainWindow window;
+    window.setWindowTitle("Seconds Calculator");
+    window.show();
+
+    return app.exec();
+}
+
+
+// file: mainwindow.h
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
+#include <QMainWindow>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QMenuBar>
+#include <QMenu>
+#include <QFileDialog>
+
+class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr);
+
+private slots:
+    void calculateSeconds();      // Обчислює результат
+    void loadFromFile();          // Зчитування з файлу
+    void saveToFile();            // Збереження результату
+
+private:
+    QLineEdit *inputEdit;
+    QLabel *resultLabel;
+};
+
+#endif // MAINWINDOW_H
+
+// file: mainwindow.cpp
+#include "mainwindow.h"
+#include <QVBoxLayout>
+#include <QWidget>
+#include <QSpinBox>
+#include <QTextStream>
+#include <QSlider>
+#include <QCommandLinkButton>
+
+// Конструктор основного вікна
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+{
+    QWidget *central = new QWidget(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(central);
+
+    // Вкладки
+    QTabWidget *tabs = new QTabWidget(this);
+    QWidget *manualTab = new QWidget(this);
+    QWidget *fileTab = new QWidget(this);
+
+    QVBoxLayout *manualLayout = new QVBoxLayout(manualTab);
+
+    // Поле для введення (QSpinBox)
+    QSpinBox *secondsInput = new QSpinBox(this);
+    secondsInput->setRange(0, 86400);
+    secondsInput->setSuffix(" сек");
+    manualLayout->addWidget(new QLabel("Введіть кількість секунд:", this));
+    manualLayout->addWidget(secondsInput);
+
+    // Альтернативний повзунок
+    QSlider *slider = new QSlider(Qt::Horizontal, this);
+    slider->setRange(0, 86400);
+    manualLayout->addWidget(slider);
+
+    // Синхронізація слайдера і spinbox
+    connect(slider, &QSlider::valueChanged, secondsInput, &QSpinBox::setValue);
+    connect(secondsInput, QOverload<int>::of(&QSpinBox::valueChanged), slider, &QSlider::setValue);
+
+    // Кнопка обчислення
+    QPushButton *calcButton = new QPushButton("Обчислити", this);
+    manualLayout->addWidget(calcButton);
+
+    // Результат
+    resultLabel = new QLabel("Результат з’явиться тут.", this);
+    manualLayout->addWidget(resultLabel);
+
+    // Кнопка-пояснення
+    QCommandLinkButton *infoBtn = new QCommandLinkButton("Що робить програма?", "Натисни для пояснення");
+    connect(infoBtn, &QCommandLinkButton::clicked, this, []() {
+        QMessageBox::information(nullptr, "Інформація",
+                                 "Програма обчислює, скільки секунд пройшло після останньої повної години, враховуючи кількість секунд від початку доби.");
+    });
+    manualLayout->addWidget(infoBtn);
+
+    // Таб «введення з файлу»
+    QVBoxLayout *fileLayout = new QVBoxLayout(fileTab);
+    QPushButton *loadBtn = new QPushButton("Зчитати з файлу формата .txt", this);
+    fileLayout->addWidget(loadBtn);
+
+    // Додаємо вкладки
+    tabs->addTab(manualTab, "Ручне введення");
+    tabs->addTab(fileTab, "З файлу");
+
+    mainLayout->addWidget(tabs);
+    setCentralWidget(central);
+
+    // Підключення обробників
+    connect(calcButton, &QPushButton::clicked, this, [=]() {
+        int N = secondsInput->value();
+        int result = N % 3600;
+        resultLabel->setText(QString("Після останньої години пройшло %1 секунд.").arg(result));
+    });
+
+    connect(loadBtn, &QPushButton::clicked, this, &MainWindow::loadFromFile);
+
+    // Меню
+    QMenu *fileMenu = menuBar()->addMenu("Файл");
+    fileMenu->addAction("Зберегти у файл", this, &MainWindow::saveToFile);
+}
+
+// Метод обчислення кількості секунд після останньої години
+void MainWindow::calculateSeconds()
+{
+    bool ok;
+    int N = inputEdit->text().toInt(&ok);
+
+    if (!ok || N < 0) {
+        QMessageBox::warning(this, "Помилка", "Будь ласка, введіть коректне невід’ємне ціле число.");
+        return;
+    }
+
+    int result = N % 3600;  // Кількість секунд після останньої години
+
+    resultLabel->setText(QString("Після останньої години пройшло %1 секунд.").arg(result));
+}
+
+// Метод зчитування значення з файлу
+void MainWindow::loadFromFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Виберіть вхідний файл");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Помилка", "Не вдалося відкрити файл.");
+        return;
+    }
+
+    QTextStream in(&file);
+    QString line = in.readLine();
+    file.close();
+
+    // Спроба конвертувати рядок у число
+    bool ok;
+    int N = line.toInt(&ok);
+
+    if (!ok || N < 0 || N > 86400) {
+        QMessageBox::warning(this, "Помилка", "Файл містить некоректне значення.");
+        return;
+    }
+
+    // Якщо використовуєш QSpinBox:
+    if (auto spin = this->findChild<QSpinBox*>()) {
+        spin->setValue(N);  // Встановлюємо значення в полі
+    }
+
+    // Автоматично обчислюємо результат
+    int result = N % 3600;
+    resultLabel->setText(QString("Після останньої години пройшло %1 секунд.").arg(result));
+    // Повідомлення для користувача
+    QMessageBox::information(this, "Зчитування завершено",
+                             "Значення успішно зчитано з файлу.\n"
+                             "Перейдіть на вкладку \"Ручне введення\", щоб побачити результат.");
+}
+
+// Метод збереження результату в файл
+void MainWindow::saveToFile()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Зберегти результат у файл");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Помилка", "Не вдалося зберегти файл.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << resultLabel->text();
+    file.close();
+}
